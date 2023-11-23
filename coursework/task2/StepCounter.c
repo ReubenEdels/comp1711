@@ -4,6 +4,32 @@
 #include "FitnessDataStruct.h"
 
 // Struct moved to header file
+void tokeniseRecord(const char *input, const char *delimiter,
+                    char *date, char *time, char *steps) {
+    // Create a copy of the input string as strtok modifies the string
+    char *inputCopy = strdup(input);
+    
+    // Tokenize the copied string
+    char *token = strtok(inputCopy, delimiter);
+    if (token != NULL) {        strcpy(date, token);
+    }
+    
+    token = strtok(NULL, delimiter);
+    if (token != NULL) {
+        strcpy(time, token);
+    }
+    
+    token = strtok(NULL, delimiter);
+    if (token != NULL) {
+        strcpy(steps, token);
+    }
+    
+    // Free the duplicated string
+    free(inputCopy);
+
+                    }
+
+
 
 // Define any additional variables here
 // Global variables for filename and FITNESS_DATA array
@@ -15,11 +41,11 @@ int A(){
 
     if (access(Filename, F_OK) != 0){
         printf("Error: Could not find or open the file.\n");
-        return 0;
+        return 1;
     }
     else{
         printf("File successfully loaded.\n");
-        return 1;
+        return 0;
     }
 }
 
@@ -139,9 +165,17 @@ int E(){
 
     fclose(file);
 
-    int mean = total / counter;
+    float meanfloat = (float)total/counter;
+    int meanint;
 
-    printf("Mean step count: %d\n", mean);
+    if(meanfloat>=0){
+        meanint = (int)(meanfloat + 0.5);
+    }else{
+        meanint = (int)(meanfloat - 0.5);
+    }
+
+
+    printf("Mean step count: %d\n", meanint);
 }
 
 int F(){
@@ -192,8 +226,10 @@ int main() {
 
     switch (choice[0]){
         case 'A':           x = A();
-                            if (x == 1){
+                            if (x == 0){
                                 main();
+                            }else{
+                                return 1;
                             }
         break;
 
